@@ -8,8 +8,8 @@ print('chip: ',node.chipid())
 print('heap: ',node.heap())
 -- wifi config start
  cfg={}
- cfg.ssid="......."
- cfg.pwd="........"
+ cfg.ssid="QuizBuzzer"
+ cfg.pwd="tntt1234"
  wifi.ap.config(cfg)
  print(wifi.ap.getip())
 -- wifi config end

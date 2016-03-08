@@ -2,8 +2,9 @@
 -- Buzzer Client
 
 -- Network Variables
-ssid = "........"
-pass = "........"
+ssid = "thecave"
+pass = "4086474567"
+buzzerName="Green"
 
 -- Configure Wireless Internet
 wifi.setmode(wifi.STATION)
@@ -34,14 +35,32 @@ end)
 -- Pin setup for reading --
 ---------------------------
 buzzerState = 0
-gpioBuzzer = 1
-gpioLED = 2
-gpio.mode(gpioBuzzer,gpio.INPUT)
-gpio.mode(gpioLED, gpio.OUTPUT)
-gpio.write(gpioLED, HIGH)
+ledState = 0
+gpioBuzzer = 2
+led = 0
 
--- Socket for Sending --
-conn = net.createConnection(net.UDP, 0)
+-- Setting gpio modes for all pins use 
+gpio.mode(gpioBuzzer,gpio.INT, gpio.PULLUP)
+gpio.mode(led, gpio.OUTPUT)
+gpio.write(led, gpio.LOW)
+
+-- Receive Message and Parse
+function buzzerReceive(c, pl)
+   if pl == "Reset" then
+      print("Resetting Buzzer State")
+      buzzerState = 0
+      gpio.write(led, gpio.LOW)
+   elseif pl == "Set" then
+      print("Setting Buzzer State")
+      buzzerState = 1
+   else
+      if string.len(pl) < 15 then
+         print("Setting Team Name")
+         buzzerName = pl
+      end
+   end
+end
+
 -- Socket to receive clear --
 buzz=net.createServer(net.UDP)
 buzz:on("receive", buzzerReceive)
@@ -49,30 +68,33 @@ buzz:listen(10000)
 
 -- Send Buzz when GPIO is LOW
 function sendBuzz()
-    conn:connect(10000,"192.168.4.1")
-    conn:send("Green")
-    conn:close()
+   print("Send Team Name")
+   -- Socket for Sending --
+   conn = net.createConnection(net.UDP, 0)
+   conn:connect(10000,"192.168.1.56")
+   conn:send(buzzerName)
+   conn:close()
+   buzz:listen(10000)
 end
 
--- Receive Message and Parse
-function buzzerReceive(c, pl)
-   if pl == "Reset"
-      print("Resetting Buzzer State")
-      buzzerState = 0
-   else if pl == "Set"
-      print("Setting Buzzer State")
-      buzzerState = 1
+
+-- Blinking the LED
+function blinkLed()
+   print("Blinking the LED")
+   if ledState == 1 then
+      gpio.write(led, gpio.LOW)
+      ledState = 0
+   else
+      gpio.write(led, gpio.HIGH)
+      ledState = 1
    end
 end
 
--- Blinking the LED
-function blinkLED()
-    print("Blinking the LED")
-end
+-- Defining Trigger and Callback --
+gpio.trig(gpioBuzzer,"both",sendBuzz)
 
--- Starting the Main Loop
-
-if gpio.read(gpioBuzzer) == 0 then
-   print(gpio.read(pin))
-   sendBuzzer()
-end
+tmr.alarm(0, 1000, 1, function()
+   if buzzerState == 1 then
+      blinkLed()
+   end
+end)
