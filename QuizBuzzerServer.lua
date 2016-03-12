@@ -38,6 +38,7 @@ function addContent(c, pl)
      print("adding to list")
      list=list..pl.."<br>"
   end
+  tmr.delay(1000*5)
   c:send("Set")
 end
 
@@ -63,17 +64,11 @@ function printHTML(c, pl)
     end
     
     print ("Receive update request")
-    c:send("<html>")
-    c:send("<head>")
-    c:send("<title>Quiz Buzzer</title>")
-    c:send("<meta http-equiv=\"refresh\" content=\"5;URL='http://192.168.4.1/'\"/>")
-    c:send("</head><body>")
-    c:send("<h1> Hello, Quiz Buzzer!!! </h1>")
-    c:send("<form src=\"/\" action=\"Reset\">Reset the Buzzer")
-    c:send("<input type=\"submit\" value=\"Reset\"></form>")
-    c:send("<br>list of people too: <br>")
-    c:send(list)
-    c:send("</body></html>")
+    header=("<html> <head> <title>Quiz Buzzer</title>  <meta http-equiv=\"refresh\" content=\"5;URL='http://192.168.4.1/'\"/>    </head><body> <h1> Hello, Quiz Buzzer!!! </h1>")
+    body=("<form src=\"/\" action=\"Reset\"> Reset the Buzzer <input type=\"submit\" value=\"Reset\"> </form> <br>list of people too: <br>")
+    footer=("</body></html>")
+    packet=header..body..list..footer
+    c:send(packet)
     closeCon(c)
 end
 
