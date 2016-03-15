@@ -59,7 +59,7 @@ function buzzerReceive(c, pl)
 end
 
 -- Timer to blink LED for short amount of time
-tmr.alarm(1, 1000, 1, function()
+tmr.alarm(1, 500, 1, function()
    if buzzerState > 0  then
 	if ledState == 1 then
 		gpio.write(led, gpio.LOW)
@@ -71,7 +71,7 @@ tmr.alarm(1, 1000, 1, function()
        buzzerState=buzzerState+1
    end
    
-   if buzzerState == 10 then
+   if buzzerState == 20 then
       buzzerState = 0
       gpio.write(led, gpio.LOW)
    end
