@@ -42,7 +42,7 @@ function printHTML(c, pl)
     end
     
     print ("Receive update request")
-    header=("<html> <head> <title>Quiz Buzzer</title>  <meta http-equiv=\"refresh\" content=\"5;URL='http://192.168.4.1/'\"/>    </head><body> <h1> Hello, Quiz Buzzer!!! </h1>")
+    header=("<html> <head> <title>Quiz Buzzer</title>  <meta http-equiv=\"refresh\" content=\"2;URL='http://192.168.4.1/'\"/>    </head><body> <h1> Hello, Quiz Buzzer!!! </h1>")
     body=("<form src=\"/\" action=\"Reset\"> Reset the Buzzer <input type=\"submit\" value=\"Reset\"> </form> <br>list of people too: <br>")
     footer=("</body></html>")
     packet=header..body..list..footer
